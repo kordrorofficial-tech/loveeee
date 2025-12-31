@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>For You</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  background: linear-gradient(#0b1d3a,#021024);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family: Arial, sans-serif;
+  color:white;
+  overflow:hidden;
+}
+
+/* ทะเล */
+.sea{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:35%;
+  background: linear-gradient(#033860,#011a2e);
+  z-index:0;
+}
+
+/* กล่องเนื้อหา */
+.card{
+  z-index:10;
+  text-align:center;
+  max-width:340px;
+}
+
+/* เฟดข้อความ */
+.fade{
+  animation: fade 4s forwards;
+}
+@keyframes fade{
+  0%{opacity:0;}
+  20%{opacity:1;}
+  80%{opacity:1;}
+  100%{opacity:0;}
+}
+
+button{
+  padding:12px 26px;
+  border:none;
+  border-radius:25px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.love{background:#e91e63;color:white;}
+.no{
+  background:#777;
+  color:white;
+  position:absolute;
+}
+
+/* พลุหน้าจอ */
+.firework{
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  animation: boom 1.5s forwards;
+}
+@keyframes boom{
+  from{transform:scale(0);opacity:1;}
+  to{transform:scale(8);opacity:0;}
+}
+
+/* หัวใจ */
+.heart{
+  position:absolute;
+  font-size:22px;
+  animation: float 2s forwards;
+}
+@keyframes float{
+  to{transform:translateY(-120px);opacity:0;}
+}
+
+/* พลุพื้นหลังทะเล */
+.bg-firework{
+  position:absolute;
+  bottom:35%;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  animation: bgBoom 2.5s forwards;
+  pointer-events:none;
+  z-index:1;
+}
+@keyframes bgBoom{
+  0%{
+    transform:translateY(0) scale(1);
+    opacity:1;
+  }
+  70%{
+    transform:translateY(-120px) scale(1);
+    opacity:1;
+  }
+  100%{
+    transform:translateY(-160px) scale(6);
+    opacity:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="sea"></div>
+<div class="card" id="card"></div>
+
+<!-- เสียง -->
+<audio id="click" src="https://cdn.pixabay.com/audio/2022/03/15/audio_20c5ff0b7a.mp3"></audio>
+<audio id="wave" src="https://cdn.pixabay.com/audio/2022/03/22/audio_9e5c39c3e5.mp3" autoplay loop></audio>
+
+<script>
+const card=document.getElementById("card");
+const click=document.getElementById("click");
+
+/* เรื่องราวเปิด */
+const story=[
+  "ปีนี้เค้าเกือบจะไม่มีอะไรแล้ว",
+  "จนมาเจอแฟน",
+  "ขอบคุณที่เข้ามาในชีวิตเค้านะ"
+];
+let i=0;
+
+function showStory(){
+  if(i<story.length){
+    card.innerHTML=`<p class="fade">${story[i]}</p>`;
+    i++;
+    setTimeout(showStory,4000);
+  }else{
+    ask();
+  }
+}
+showStory();
+
+/* หน้าคำถาม */
+function ask(){
+  card.innerHTML=`
+    <h2>แฟนรักเค้ามั้ยยย 💕</h2>
+    <button class="love" onclick="yes()">รักแฟน</button>
+    <button class="no" id="no">ไม่รัก</button>
+  `;
+  dodge();
+}
+
+/* ปุ่มไม่รักหลบ */
+function dodge(){
+  const no=document.getElementById("no");
+  no.onmouseover=()=>{
+    no.style.left=Math.random()*70+"%";
+    no.style.top=Math.random()*70+"%";
+  };
+  no.onclick=()=>{
+    click.play();
+    card.innerHTML="<h2>ไม่รักจริงอ่ออ 😿</h2>";
+    setTimeout(()=>location.reload(),1500);
+  };
+}
+
+/* กดรัก */
+function yes(){
+  click.play();
+  card.innerHTML=`
+    <h1>HAPPY NEW YEAR KUB 🎉</h1>
+    <p>เค้าก็รักแฟนมากก ❤️</p>
+    <p>อยู่กับเค้าไปอีกหลายๆปีเลยนะ</p>
+    <p><b>ห้ามมีกิ๊ก</b></p>
+    <p>จุ้บบ 😘</p>
+    <button class="love" onclick="hug()">กอดเค้าหน่อย</button>
+  `;
+  fireworks();
+}
+
+/* พลุตอนกดรัก */
+function fireworks(){
+  for(let i=0;i<10;i++){
+    let f=document.createElement("div");
+    f.className="firework";
+    f.style.left=Math.random()*100+"vw";
+    f.style.top=Math.random()*40+"vh";
+    f.style.background=`hsl(${Math.random()*360},100%,70%)`;
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1500);
+  }
+}
+
+/* หัวใจ */
+function hug(){
+  for(let i=0;i<15;i++){
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerText="❤️";
+    h.style.left=Math.random()*100+"vw";
+    h.style.bottom="35%";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),2000);
+  }
+}
+
+/* พลุพื้นหลังทะเล ยิงเรื่อย ๆ */
+setInterval(()=>{
+  const f=document.createElement("div");
+  f.className="bg-firework";
+  f.style.left=Math.random()*100+"vw";
+  f.style.background=`hsl(${Math.random()*360},100%,70%)`;
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),2500);
+},900);
+</script>
+
+</body>
+</html>
